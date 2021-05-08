@@ -36,7 +36,7 @@ In manual mode, you specify what you want to do. For any command-line option tha
 .SH MODE-SETTING OPTIONS
 .TP
 .B \-c, \-\-dump\-config [<filename>]
-Read the config from the remote and write it to a file.  If no filename is specified, config.EZHex is used.
+Read the config from the remote and write it to a file.  If no filename is specified, update.EZHex is used.
 .TP
 .B \-C, \-\-write\-config <filename>
 Read a config from <filename> and write it to the remote.
@@ -79,7 +79,7 @@ Print the version and exit
 Additionally, you can specify options to adjust the behavior of the software:
 .SH OTHER OPTIONS
 .TP
-.B \-b, \-\-binary\-only
+.B \-b, \-\-binary
 When dumping a config or firmware, this specifies to dump only the binary portion. When use without a specific filename, the default filename's extension is changed to .bin. When writing a config or firmware, this specifies the filename passed in has just the binary blob, not the XML.
 .TP
 .B \-\-force

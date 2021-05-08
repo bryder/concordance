@@ -505,7 +505,7 @@ void help()
 
     printf("   -c, --dump-config [<filename>]\n");
     printf("\tRead the config from the remote and write it to a file.");
-    printf("\n\tIf no filename is specified, config.EZHex is used.\n\n");
+    printf("\n\tIf no filename is specified, update.EZHex is used.\n\n");
     printf("   -C, --write-config <filename>\n");
     printf("\tRead a config from <filename> and write it to the");
     printf(" remote.\n\n");
@@ -545,7 +545,7 @@ void help()
     printf("Additionally, you can specify options to adjust the behavior");
     printf(" of the software:\n\n");
 
-    printf("  -b, --binary-only\n");
+    printf("  -b, --binary\n");
     printf("\tWhen dumping a config or firmware, this specifies to dump");
     printf(" only the\n\tbinary portion. When use without a specific");
     printf(" filename, the default\n\tfilename's extension is changed to");
