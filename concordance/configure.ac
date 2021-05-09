@@ -1,8 +1,8 @@
-AC_INIT([concordance], [1.4], [concordance-devel@lists.sourceforge.net])
+AC_INIT([concordance],[1.4],[concordance-devel@lists.sourceforge.net])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AM_PROG_CC_C_O
 AC_CONFIG_MACRO_DIR([m4])
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_CXX
 AC_CANONICAL_HOST
 LIBCONCORD_VERSION="5"
