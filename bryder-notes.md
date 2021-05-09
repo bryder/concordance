@@ -1,6 +1,100 @@
-# Trying msys2
+# Using concordance
 
-This worked. There were too many missing libraries in ubuntu mingw.
+Run installer
+Testing with harmony one
+###  --dump-config and --dump-firmware also can use --binary
+They all worked
+### --print-remote-info --verbose
+```powershell
+& 'C:\Program Files\Concordance\concordance.exe' --verbose --print-remote-info
+```
+```text
+Concordance 1.4
+Copyright 2007 Kevin Timmerman and Phil Dibowitz
+This software is distributed under the GPLv3.
+
+Requesting identity:  100%             done
+Model: Logitech Harmony One
+Skin: 54
+Firmware Version: 3.4
+Firmware Type: 0
+Hardware Version: 0.5.0
+External Flash: 4 MiB - 1F:C8 Atmel AT49BV322A
+Architecture: 12
+Protocol: 12
+Manufacturer: Harmony Remote 0-3.4.0
+Product: Harmony Remote 0-3.4.0
+IRL, ORL, FRL: 0, 0, 0
+USB VID: 046D
+USB PID: C121
+USB Ver: 1054
+Serial Number: {EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE}
+{DF516B9C-21EB-4E82-BA04-CF8F25E92A4B}
+{B489E5E9-0226-4209-B81F-FCEFA2D24615}
+Config Flash Used: 45% (1758 of 3840 KiB)
+
+Success!
+```
+### --verbose --dump-safemode
+```powershell
+ce\concordance.exe: unknown option -- dump-safe-mode
+PS C:\Users\xx\harmonyone> & 'C:\Program Files\Concordance\concordance.exe' --verbose --dump-safemode 
+Concordance 1.4
+Copyright 2007 Kevin Timmerman and Phil Dibowitz
+This software is distributed under the GPLv3.
+
+Requesting identity:  100%             done
+Reading safemode fw:  100%    64 KiB   done
+Success!
+```
+
+### --get-time --verbose
+```powershell
+& 'C:\Program Files\Concordance\concordance.exe' --get-time --verbose
+Concordance 1.4
+Copyright 2007 Kevin Timmerman and Phil Dibowitz
+This software is distributed under the GPLv3.
+
+Requesting identity:  100%             done
+Remote time is 2015/03/29 Sun 18:20:02 +0
+Success!
+```
+
+### Inputting pronto codes
+
+* [ref](https://www.avforums.com/threads/guide-to-getting-pronto-hex-codes-into-your-harmony-remote.1510519/)
+* [harmony size](http://members.harmonyremote.com/EasyZapper) use yh4 and enter when you put in the password
+
+when doing something go to troubleshoot and say 'The remote control software didn't open automatically'
+
+* Go to other
+* learn ir commands
+* select 0 - 9
+* learn selected commands
+* troubleshoot
+* the remote control software didn't open automatically
+* Download LearnIr.EZTut
+
+Then you run
+```text
+--learn-ir LearnIr.EZTut
+```
+
+You do one key, H, 'U' upload it, and on to the next key. When you're done you quit.
+
+Then you update remote.
+The first phase needs you to do a connectivity test. Then you can get the config
+```bash
+--connectivity-test Connectivity.something
+--write-config theconfig_you_downloaded.
+```
+## TODOs
+* help for --dump-config is wrong. It writes to Update.EZHex not config.EZHex
+
+
+# msys2
+
+This worked. There were too many missing libraries in ubuntu mingw. 
 
 * https://www.msys2.org/
 * https://www.msys2.org/docs/package-management/
@@ -26,6 +120,11 @@ pacman -S mingw-w64-x86_64-libzip
 pacman -S mingw-w64-x86_64-nsis
 pacman -S mingw-w64-x86_64-lzma
 git clone https://github.com/bryder/concordance.git
+```
+
+
+```bash
+
 mkdir /tmp/buildroot
 cd concordance/libconcord
 mkdir m4; autoreconf --install # excpet no output while this runs for a bit.
@@ -36,18 +135,16 @@ make
 make install
 
 cd ../concordance
-mkdir m4; 
-autoreconf --install # excpet no output while this runs for a bit.
 autoupdate
-autoreconf --install
+autoreconf --install # excpet no output while this runs for a bit.
 
 export MINGW_SYSROOT_BIN=C:/msys64/mingw64/bin
 export MINGW_SYSROOT=C:/msys64/
 
 
 ./configure --prefix=/tmp/buildroot CFLAGS="-I/tmp/buildroot/include" LDFLAGS="-L/tmp/buildroot/lib -L/tmp/buildroot/bin"
-make
 make install
+
 # Had to edit the .nsi a lot
 makensis win/msys2_bryder.nsi
 # But this does seem to work so far
