@@ -8,3 +8,8 @@ man1_MANS = concordance.1
 
 win32-installer:
 	makensis win/concordance.nsi
+
+win32-bryder-installer:
+	makensis win/msys2_bryder.nsi
+
+
