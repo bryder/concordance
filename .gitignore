@@ -37,3 +37,4 @@ libconcord/bindings/perl/blib/
 
 ## libconcord python bindings
 libconcord/bindings/python/build/
+.idea/

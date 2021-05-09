@@ -1,0 +1,88 @@
+Index: Makefile.am
+===================================================================
+RCS file: /cvsroot/concordance/concordance/concordance/Makefile.am,v
+retrieving revision 1.7
+diff -u -3 -p -r1.7 Makefile.am
+--- Makefile.am	14 Apr 2008 01:55:46 -0000	1.7
++++ Makefile.am	26 Apr 2009 22:14:23 -0000
+@@ -1,5 +1,5 @@
+ bin_PROGRAMS = concordance
+-concordance_SOURCES = concordance.c
++concordance_SOURCES = concordance.c prontocodes.h prontocodes.c
+ concordance_LDFLAGS = -lconcord
+ # -Wall just makes good sense
+ # -ansi and -pednatic errors are needed to ensure we're compatible with
+Index: concordance.c
+===================================================================
+RCS file: /cvsroot/concordance/concordance/concordance/concordance.c,v
+retrieving revision 1.38
+diff -u -3 -p -r1.38 concordance.c
+--- concordance.c	6 Apr 2009 20:34:48 -0000	1.38
++++ concordance.c	26 Apr 2009 22:14:23 -0000
+@@ -27,6 +27,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include "prontocodes.h"
+ 
+ #ifdef WIN32
+ /* Windows includes*/
+@@ -225,6 +226,33 @@ void print_received_ir_signal(uint32_t c
+ #endif
+ }
+ 
++int get_pronto_code(uint32_t *carrier_clock, 
++	uint32_t **ir_signal, uint32_t *ir_signal_length)
++{
++	struct pco_pronto_code pronto_code;
++	char pronto_hex_string[1000];
++	int err;
++
++	/*  read code from stdin: */
++	printf("Enter Pronto hex code (xxxx xxxx xxxx...):\n");
++	if (fgets(pronto_hex_string, 1000, stdin) == NULL) {
++		err = PCO_ERROR_BAD_CODE;
++	}
++
++	err = pco_sscanf_pronto_code(pronto_hex_string, &pronto_code);
++
++	if (err == 0) {
++		/*
++		 * If code has a repeat part, include it 2 times, so the
++		 * Logitech database might recognize it as repeat code:
++		 */
++		err = pco_pronto_to_ir_signal(pronto_code, 2, carrier_clock,
++			ir_signal, ir_signal_length);
++	}
++	pco_delete_pronto_code(pronto_code);
++	return err;
++}
++
+ char get_cmd(char *prompt, char *allowed, char def) {
+ 	char result = 0;
+ 	char got_key;
+@@ -274,7 +302,7 @@ int learn_ir_commands(uint8_t *data, uin
+ 		}
+ 		printf("\nKey name : <%s> : \n", key_names[index]);
+ 		user_cmd = get_cmd(
+-			"[L]earn, [N]ext, [P]revious, [Q]uit",
++			"[L]earn, Pronto [H]ex code, [N]ext, [P]revious, [Q]uit",
+ 			"LlHhNnPpQq", 'L');
+ 		err = -1; 
+ 		/* have no code yet */
+@@ -292,6 +320,15 @@ int learn_ir_commands(uint8_t *data, uin
+ 					printf("       done\n");
+ 				}
+ 				break;
++			case 'H':
++			case 'h': /* requested to get Pronto (from stdin): */
++				err = get_pronto_code(&carrier_clock, &ir_signal,
++					&ir_signal_length);
++				if (err != 0) {
++					printf("??? Failed: %s - try again!\n",
++						pco_strerror(err));
++				}
++				break;
+ 			case 'P':
+ 			case 'p':
+ 				if (index > 0) {
