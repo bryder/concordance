@@ -1,8 +1,8 @@
 # Concordance
 
 This software allows you to program your Logitech Harmony remote using a
-configuration object retreived from the harmony website:
-  http://members.harmonyremote.com/EasyZapper/
+configuration object retrieved from the [harmony
+website](https://members.harmonyremote.com/EasyZapper/New/ProcLogin/Start.asp?BrowserIsChecked=True)
 
 The website is required. The website is required in Logitech's software as
 well, it's just that their software wraps the website. Their website has
@@ -21,11 +21,20 @@ order to work around this, you will have to use a web browser that ignores
 this header.  For Firefox, the 'Ignore X-Frame-Options Header' Add-on has been
 used successfully.  For other browsers, there may be similar add-ons available.
 
-Here is how you use this software:
+## Installing
 
-NOTE TO MAC USERS: You need to use 'sudo' since you don't have udev.
+Concordance is packaged in a wide variety of Linux distributions and other
+OS package repositories. The easiest path is to use such a package if it's available for your OS/distro.
 
-NOTE TO LINUX USERS: This assumes you have proper udev support setup
+[![Packaging status](https://repology.org/badge/vertical-allrepos/concordance.svg)](https://repology.org/project/concordance/versions)
+
+If it's not packaged for your OS/distro, then refer to the appropriate `INSTALL` file in this repository for your OS.
+
+## Usage
+
+*NOTE TO MAC USERS*: You need to use 'sudo' since you don't have udev.
+
+*NOTE TO LINUX USERS*: This assumes you have proper udev support setup
 (see the INSTALL.Linux file in the libconcord source). If not, you'll
 need to use sudo or be root.
 
@@ -101,8 +110,8 @@ need to use sudo or be root.
 
 5. Write firmware
 
-  NOTE: This feature is only implemented for certain models. Please see:
-    http://www.phildev.net/concordance/supported_models.shtml
+  NOTE: This feature is only implemented for certain models. Please see
+    [supported models](SupportedModels.md)
 
   However for models we support this on, it works like this:
 
@@ -118,8 +127,10 @@ need to use sudo or be root.
 
 There are other options - check out the --help one!
 
+## Related Software
 
-THIS SOFTWARE IS NOT SUPPORTED BY OR IN ANY WAY RELATED TO LOGITECH!
+* [Congruity](https://github.com/congruity/congruity) is a cross-platform graphical front-end for libconcord written in python
 
+## Disclaimer
 
-vim:textwidth=78:
+*THIS SOFTWARE IS NOT SUPPORTED BY OR IN ANY WAY RELATED TO LOGITECH!*

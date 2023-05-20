@@ -17,11 +17,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='libconcord',
-    version='1.4',
+    version='1.5',
     py_modules=['libconcord'],
 )
 
