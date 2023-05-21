@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "prontocodes.h"
 
 #ifdef _WIN32
 /* Windows includes*/
@@ -89,7 +90,7 @@ int set_canon(int flag)
 #define DEFAULT_FW_FILENAME_BIN "firmware.bin"
 #define DEFAULT_SAFE_FILENAME "safe.bin"
 
-const char * const VERSION = "1.5";
+const char * const VERSION = "1.5.pronto";
 
 struct options_t {
     int binary;
@@ -247,6 +248,40 @@ void print_received_ir_signal(uint32_t carrier_clock, uint32_t *ir_signal,
     }
 #endif
 }
+
+int get_pronto_code(uint32_t *carrier_clock,
+	uint32_t **ir_signal, uint32_t *ir_signal_length)
+{
+	struct pco_pronto_code pronto_code;
+	char pronto_hex_string[1000];
+	int err;
+
+	/*  read code from stdin: */
+	printf("Enter Pronto hex code (xxxx xxxx xxxx...):\n");
+	if (fgets(pronto_hex_string, 1000, stdin) == NULL) {
+		err = PCO_ERROR_BAD_CODE;
+	}
+#ifdef _DEBUG
+    printf("Decoding: %s\n", pronto_hex_string);
+#endif
+	err = pco_sscanf_pronto_code(pronto_hex_string, &pronto_code);
+
+	if (err == 0) {
+		/*
+		 * If code has a repeat part, include it 2 times, so the
+		 * Logitech database might recognize it as repeat code:
+		 */
+		 printf("pco_pronto_to_ir_signal\n");
+		err = pco_pronto_to_ir_signal(pronto_code, 2, carrier_clock,
+			ir_signal, ir_signal_length);
+		 printf("pco_pronto_to_ir_signal err err: %d\n", err);
+	}
+	printf("About to pco_delete_pronto_code\n");
+	pco_delete_pronto_code(pronto_code);
+	printf("Done pco_delete_pronto_code\n");
+	return err;
+}
+
 
 char get_cmd(char *prompt, char *allowed, char def) {
     char result = 0;
@@ -603,7 +638,7 @@ int learn_ir_commands(struct options_t *options, lc_callback cb, void *cb_arg)
             printf("Last key in list!\n");
         }
         printf("\nKey name : <%s> : \n", key_names[index]);
-        user_cmd = get_cmd("[L]earn, [N]ext, [P]revious, [Q]uit", "LlHhNnPpQq",
+        user_cmd = get_cmd("[L]earn, Pronto [H]ex code, [N]ext, [P]revious, [Q]uit", "LlHhNnPpQq",
                            'L');
         err = -1; 
         /* have no code yet */
@@ -617,6 +652,18 @@ int learn_ir_commands(struct options_t *options, lc_callback cb, void *cb_arg)
                     &ir_signal, &ir_signal_length,
                     cb_print_percent_status, NULL);
                 break;
+			case 'H':
+			case 'h': /* requested to get Pronto (from stdin): */
+				err = get_pronto_code(&carrier_clock, &ir_signal,
+					&ir_signal_length);
+#ifdef _DEBUG
+                    printf("Got pronto code - err = %d length = %d\n", err, ir_signal_length);
+#endif
+				if (err != 0) {
+					printf("??? Failed: %s - try again!\n",
+						pco_strerror(err));
+				}
+				break;
             case 'P':
             case 'p':
                 if (index > 0) {
